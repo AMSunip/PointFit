@@ -95,7 +95,7 @@ function varargout = PointFit(varargin)
 
 % Edit the above text to modify the response to help PointFit
 
-% Last Modified by GUIDE v2.5 18-Feb-2021 20:21:59
+% Last Modified by GUIDE v2.5 15-May-2021 10:29:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -970,3 +970,9 @@ set(FaultRecoveryByFeatures,'Visible','on');
 function openGUIFaultRecoveryByDistance(handles)
 % close(PointFit); 
 set(FaultRecoveryByDistance,'Visible','on');
+
+
+% --------------------------------------------------------------------
+function openGUIPointXYZToDistanceHeight_Callback(hObject, eventdata, handles)
+% close(PointFit); 
+set(PointXYZToDistanceHeight,'Visible','on');
