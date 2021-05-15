@@ -1,0 +1,6 @@
+cmd demo:
+1.RecoveryByFeatures;
+FaultRecovery igcea aiming features D:\Testdata\ELF1-1.xyz 489666.2593 4058477.2021 489703.5873  4058419.6785 489706.9382 4058453.7378 489698.7534 4058443.8103 489665.0402 4058455.3703 489652.1639 4058434.7359 D:\\result_by_feature.xyz
+
+2.RecoveryByDistances;
+FaultRecovery igcea aiming distance D:\Testdata\ELF1-1.xyz 489666.2593 4058477.2021 489703.5873  4058419.6785 20 D:\\result_by_distance.xyz
