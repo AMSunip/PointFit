@@ -258,14 +258,6 @@ data = load(filePath);
 x = data(:,1);
 y = data(:,2);
 
-data2 = diff(data);
-x_short1 = x(1:(m-1),1:1);
-xx = data2(:,1);
-yy = data2(:,2);
-slope = yy./xx;
-
-slope_angle = atan(slope)*180./pi;
-
 % 坐标轴缩放比例系数
 x_scale = 1;
 y_scale = 1;
@@ -961,6 +953,12 @@ set(handles.edit_step_size,'string','1');
 
 
 % --------------------------------------------------------------------
+function openGUIPointXYZToDistanceHeight_Callback(hObject, eventdata, handles)
+% close(PointFit); 
+set(PointXYZToDistanceHeight,'Visible','on');
+
+
+% --------------------------------------------------------------------
 function openGUIFaultRecoveryByFeatures(handles)
 % close(PointFit); 
 set(FaultRecoveryByFeatures,'Visible','on');
@@ -970,9 +968,3 @@ set(FaultRecoveryByFeatures,'Visible','on');
 function openGUIFaultRecoveryByDistance(handles)
 % close(PointFit); 
 set(FaultRecoveryByDistance,'Visible','on');
-
-
-% --------------------------------------------------------------------
-function openGUIPointXYZToDistanceHeight_Callback(hObject, eventdata, handles)
-% close(PointFit); 
-set(PointXYZToDistanceHeight,'Visible','on');
