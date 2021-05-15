@@ -165,6 +165,7 @@ function checkbox_order_Callback(hObject, eventdata, handles)
 function pushbutton_ok_Callback(hObject, eventdata, handles)
 
 filePath = get(handles.edit_file_path, 'String');
+[aPart,bPart,cPart]=fileparts(filePath);
 data = load(filePath);
 
 [m,n] = size(data);
@@ -176,18 +177,75 @@ xdata = data(:,1);
 ydata = data(:,2);
 zdata = data(:,3);
 
-dx = max(xdata) - min(xdata);
-dy = max(ydata) - min(ydata);
-dz = max(zdata) - min(zdata);
+xDataPrj = [];
+yDataPrj = [];
 
+% dx = max(xdata) - min(xdata);
+% dy = max(ydata) - min(ydata);
+% dz = max(zdata) - min(zdata);
 
  % 直线拟合 y = kx + b 模型
  p1 = polyfit(xdata,ydata,1);
  k1 = p1(1,1);
  b1 = p1(1,2);
  
- a = 1;
+ % 求每个点在拟合直线上的投影点
+ for i=1:m
+     inputX = xdata(i,1);
+     inputY = ydata(i,1);
+     [outputX,outputY] = getProjectPoint(k1, b1, inputX,inputY);
+     xDataPrj = [xDataPrj;outputX];
+     yDataPrj = [yDataPrj;outputY];
+ end
+ 
+ dataPrj = [xDataPrj,yDataPrj, zdata];
+ 
+orderOption = 1;
+if get(handles.checkbox_order,'value')
+    option = -1;    % 逆序写入
+end
+ 
+  % 对投影点进行排序
+% ascendingDataPrj = sortrows(dataPrj,1);        % 按照横坐标升序 [正序]
+% descendingDataPrj = sortrows(dataPrj,-1);      % 按照横坐标降序 [逆序]
+orderDataPrj = sortrows(dataPrj,orderOption);
+heightList = orderDataPrj(:,3);                  % 高程列表
 
+distanceList = [];                               % 距离列表
+% 求投影点间距
+x0 = orderDataPrj(1,1);
+y0 = orderDataPrj(1,2);
+for j = 1:m
+    xj = orderDataPrj(j,1);
+    yj = orderDataPrj(j,2);
+    distance = sqrt((xj-x0) * (xj-x0) + (yj-y0)*(yj-y0));
+    distanceList = [distanceList;distance];
+end
+
+% 角度校正 （即将距离投影到垂直于断裂的方向上, 默认值90度, 即不投影）
+distanceHeightData = [distanceList, heightList];
+if get(handles.checkbox_angle,'value')  
+    
+  strAngle = get(handles.edit_angle, 'String');
+  angle = str2num(strAngle);
+  if (angle>0) && (angle<180)
+      radian = angle*pi/180;
+      distanceList = distanceList.*sin(radian);
+      distanceHeightData = [distanceList, heightList];    % 更新距离
+  else
+      msgbox('The angle is not in the specified range, please check!','Notification');
+      return;
+  end 
+end
+
+% 序列化信息，并写入文件
+dateString = func_time_now();
+outputFileName =  strcat(aPart, '\', dateString,'.csv');
+FileWriterXYZ(outputFileName, distanceHeightData);
+
+% msg = strcat('Distance elevation file has been generated!', '\r\n', 'File Path: ', outputFileName);
+strmsg = {'Distance elevation file has been generated!';'File Path: ';outputFileName};
+msgbox(strmsg,'Notification');
 
 % --- Executes on button press in pushbutton_clear.
 function pushbutton_clear_Callback(hObject, eventdata, handles)
